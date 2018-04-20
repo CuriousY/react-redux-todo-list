@@ -1,5 +1,6 @@
 const express = require('express'),
-    app = express();
+    app = express(),
+    port = process.env.port || 3000;
 
 
 app.use(express.static(__dirname + '/public'));
@@ -10,6 +11,6 @@ app.get('/', (req, res) => {
 
 });
 
-app.listen(3000, () => {
-    console.log('listening on 3000');
+app.listen(port, () => {
+    console.log(`server started on ${port}`);
 });
