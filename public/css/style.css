@@ -1,5 +1,5 @@
 body{
-    background-color: #f4363640;
+    background-color: #ffcf2340;
 }
 
 /* Include the padding and border in an element's total width and height */
@@ -114,7 +114,3 @@ input {
     background-color: #bbb;
 }
 
-.todoList
-{
-    margin-top:20px;
-}
