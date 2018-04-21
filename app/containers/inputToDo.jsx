@@ -25,7 +25,8 @@ class InputSection extends Component {
                 task: txtValue,
                 completed: false
             };
-            this.props.addItem(task)
+            this.props.addItem(task);
+            this.refs.txtTask.value = "";
         }
     }
 
@@ -33,7 +34,7 @@ class InputSection extends Component {
         return (
             <div id="myDIV" className="header">
                 <h2>My To Do List</h2>
-                <input type="text" ref="txtTask" name="task" id="myInput" placeholder="Enter your task" />
+                <input type="text" ref="txtTask" name="task" id="myInput" placeholder="Enter your item..." />
                 <span onClick={this.updateTask} className="addBtn">Add</span>
             </div>
         );

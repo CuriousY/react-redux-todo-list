@@ -2183,6 +2183,7 @@ class InputSection extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
                 completed: false
             };
             this.props.addItem(task);
+            this.refs.txtTask.value = "";
         }
     }
 
@@ -2195,7 +2196,7 @@ class InputSection extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
                 null,
                 'My To Do List'
             ),
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'text', ref: 'txtTask', name: 'task', id: 'myInput', placeholder: 'Enter your task' }),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'text', ref: 'txtTask', name: 'task', id: 'myInput', placeholder: 'Enter your item...' }),
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                 'span',
                 { onClick: this.updateTask, className: 'addBtn' },
