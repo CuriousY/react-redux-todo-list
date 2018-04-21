@@ -1,9 +1,10 @@
-import { GET_ITEMS, ADD_ITEM,MARK_ITEM_COMPLETE } from '../actions/type';
+import { GET_ITEMS, ADD_ITEM, MARK_ITEM_COMPLETE, REMOVE_ITEM } from '../actions/type';
 
 const initialState = {
   items: [],
   item: {},
-  markCompleteIndex: -1
+  markCompleteIndex: -1,
+  removeItemIndex: -1
 };
 
 export default function (state = initialState, action) {
@@ -11,18 +12,27 @@ export default function (state = initialState, action) {
     case GET_ITEMS: return {
       ...state,
       items: action.payload,
-      markCompleteIndex:-1
+      markCompleteIndex: -1,
+      removeItemIndex: -1
     };
     case ADD_ITEM:
       return {
         ...state,
         item: action.payload,
-        markCompleteIndex:-1
+        markCompleteIndex: -1,
+        removeItemIndex: -1
       };
     case MARK_ITEM_COMPLETE:
       return {
         ...state,
-        markCompleteIndex: action.payload
+        markCompleteIndex: action.payload,
+        removeItemIndex: -1
+      };
+    case REMOVE_ITEM:
+      return {
+        ...state,
+        removeItemIndex: action.payload,
+        markCompleteIndex: -1
       };
     default:
       return state;

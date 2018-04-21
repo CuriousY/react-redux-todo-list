@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { getItems, markItemComplete } from '../actions/todoActions'
+import { getItems, markItemComplete, removeItem } from '../actions/todoActions'
 
 class ToDoList extends Component {
     constructor(props) {
@@ -11,13 +11,15 @@ class ToDoList extends Component {
         this.props.getItems();
     }
     componentWillReceiveProps(props) {
-        if (props.nextItem && props.markCompleteIndex == -1) {
+        if (props.nextItem && props.markCompleteIndex == -1 && props.removeItemIndex == -1) {
             this.props.toDoList.push(props.nextItem)
         }
-        else {
-            this.props.toDoList[props.markCompleteIndex - 1].completed = true;
+        if (props.removeItemIndex >= 0) {
+            this.props.toDoList.splice(props.removeItemIndex, 1);
         }
-
+        if (props.markCompleteIndex >= 0 && props.removeItemIndex == -1) {
+            this.props.toDoList[props.markCompleteIndex].completed = true;
+        }
     }
     render() {
         return (
@@ -33,11 +35,15 @@ class ToDoList extends Component {
 const ListItems = (props) => {
     let todoListData = props.props.toDoList;
     if (todoListData) {
-        return todoListData.map((item) => {
+        return todoListData.map((item, i) => {
             return (
-                <li onClick={() => props.props.markItemComplete(item.id)} id={item.id}
+                <li onClick={(event) => props.props.markItemComplete(i)} id={i}
                     className={item.completed ? "checked" : ""} key={item.id}>{item.task}
-                    <span className="close">×</span></li>
+                    <span onClick={(event) => {
+                        event.stopPropagation();
+                        props.props.removeItem(i)
+                    }}
+                        className="close" >×</span></li>
             );
         });
     }
@@ -48,8 +54,9 @@ function mapStateToProps(state) {
     return {
         toDoList: state.todoTasks.items,
         nextItem: state.todoTasks.item,
-        markCompleteIndex: state.todoTasks.markCompleteIndex
+        markCompleteIndex: state.todoTasks.markCompleteIndex,
+        removeItemIndex: state.todoTasks.removeItemIndex
     }
 }
 
-export default connect(mapStateToProps, { getItems, markItemComplete })(ToDoList);
+export default connect(mapStateToProps, { getItems, markItemComplete, removeItem })(ToDoList);

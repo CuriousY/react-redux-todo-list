@@ -1198,6 +1198,9 @@ const ADD_ITEM = 'ADD_ITEM';
 const MARK_ITEM_COMPLETE = 'MARK_ITEM_COMPLETE';
 /* harmony export (immutable) */ __webpack_exports__["c"] = MARK_ITEM_COMPLETE;
 
+const REMOVE_ITEM = 'REMOVE_ITEM';
+/* harmony export (immutable) */ __webpack_exports__["d"] = REMOVE_ITEM;
+
 
 /***/ }),
 /* 10 */
@@ -1337,7 +1340,7 @@ const addItem = taskData => dispatch => {
         payload: taskData
     });
 };
-/* harmony export (immutable) */ __webpack_exports__["c"] = addItem;
+/* harmony export (immutable) */ __webpack_exports__["d"] = addItem;
 
 
 const markItemComplete = index => dispatch => {
@@ -1347,6 +1350,15 @@ const markItemComplete = index => dispatch => {
     });
 };
 /* harmony export (immutable) */ __webpack_exports__["b"] = markItemComplete;
+
+
+const removeItem = index => dispatch => {
+    dispatch({
+        type: __WEBPACK_IMPORTED_MODULE_0__type__["d" /* REMOVE_ITEM */],
+        payload: index
+    });
+};
+/* harmony export (immutable) */ __webpack_exports__["c"] = removeItem;
 
 
 /***/ }),
@@ -2160,19 +2172,18 @@ class InputSection extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 
     updateTask(e) {
         let id = 0;
+        let txtValue = this.refs.txtTask.value;
         if (this.props.toDoList) {
             id = this.props.toDoList.length + 1;
         }
-        let task = {
-            id: id,
-            task: this.state.task,
-            completed: false
-        };
-        this.props.addItem(task);
-    }
-
-    updateInputValue(e) {
-        this.setState({ [e.target.name]: e.target.value });
+        if (txtValue) {
+            let task = {
+                id: id,
+                task: txtValue,
+                completed: false
+            };
+            this.props.addItem(task);
+        }
     }
 
     render() {
@@ -2184,7 +2195,7 @@ class InputSection extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
                 null,
                 'My To Do List'
             ),
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'text', onChange: event => this.updateInputValue(event), name: 'task', id: 'myInput', placeholder: 'Enter your task' }),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'text', ref: 'txtTask', name: 'task', id: 'myInput', placeholder: 'Enter your task' }),
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                 'span',
                 { onClick: this.updateTask, className: 'addBtn' },
@@ -2201,7 +2212,7 @@ function mapStateToProps(state) {
     };
 }
 
-/* harmony default export */ __webpack_exports__["a"] = (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_react_redux__["b" /* connect */])(mapStateToProps, { addItem: __WEBPACK_IMPORTED_MODULE_3__actions_todoActions__["c" /* addItem */] })(InputSection));
+/* harmony default export */ __webpack_exports__["a"] = (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_react_redux__["b" /* connect */])(mapStateToProps, { addItem: __WEBPACK_IMPORTED_MODULE_3__actions_todoActions__["d" /* addItem */] })(InputSection));
 
 /***/ }),
 /* 29 */
@@ -2226,10 +2237,14 @@ class ToDoList extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
         this.props.getItems();
     }
     componentWillReceiveProps(props) {
-        if (props.nextItem && props.markCompleteIndex == -1) {
+        if (props.nextItem && props.markCompleteIndex == -1 && props.removeItemIndex == -1) {
             this.props.toDoList.push(props.nextItem);
-        } else {
-            this.props.toDoList[props.markCompleteIndex - 1].completed = true;
+        }
+        if (props.removeItemIndex >= 0) {
+            this.props.toDoList.splice(props.removeItemIndex, 1);
+        }
+        if (props.markCompleteIndex >= 0 && props.removeItemIndex == -1) {
+            this.props.toDoList[props.markCompleteIndex].completed = true;
         }
     }
     render() {
@@ -2248,15 +2263,19 @@ class ToDoList extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 const ListItems = props => {
     let todoListData = props.props.toDoList;
     if (todoListData) {
-        return todoListData.map(item => {
+        return todoListData.map((item, i) => {
             return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                 'li',
-                { onClick: () => props.props.markItemComplete(item.id), id: item.id,
+                { onClick: event => props.props.markItemComplete(i), id: i,
                     className: item.completed ? "checked" : "", key: item.id },
                 item.task,
                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                     'span',
-                    { className: 'close' },
+                    { onClick: event => {
+                            event.stopPropagation();
+                            props.props.removeItem(i);
+                        },
+                        className: 'close' },
                     '\xD7'
                 )
             );
@@ -2273,11 +2292,12 @@ function mapStateToProps(state) {
     return {
         toDoList: state.todoTasks.items,
         nextItem: state.todoTasks.item,
-        markCompleteIndex: state.todoTasks.markCompleteIndex
+        markCompleteIndex: state.todoTasks.markCompleteIndex,
+        removeItemIndex: state.todoTasks.removeItemIndex
     };
 }
 
-/* harmony default export */ __webpack_exports__["a"] = (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_react_redux__["b" /* connect */])(mapStateToProps, { getItems: __WEBPACK_IMPORTED_MODULE_3__actions_todoActions__["a" /* getItems */], markItemComplete: __WEBPACK_IMPORTED_MODULE_3__actions_todoActions__["b" /* markItemComplete */] })(ToDoList));
+/* harmony default export */ __webpack_exports__["a"] = (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_react_redux__["b" /* connect */])(mapStateToProps, { getItems: __WEBPACK_IMPORTED_MODULE_3__actions_todoActions__["a" /* getItems */], markItemComplete: __WEBPACK_IMPORTED_MODULE_3__actions_todoActions__["b" /* markItemComplete */], removeItem: __WEBPACK_IMPORTED_MODULE_3__actions_todoActions__["c" /* removeItem */] })(ToDoList));
 
 /***/ }),
 /* 30 */
@@ -2358,7 +2378,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 const initialState = {
   items: [],
   item: {},
-  markCompleteIndex: -1
+  markCompleteIndex: -1,
+  removeItemIndex: -1
 };
 
 /* harmony default export */ __webpack_exports__["a"] = (function (state = initialState, action) {
@@ -2366,16 +2387,24 @@ const initialState = {
     case __WEBPACK_IMPORTED_MODULE_0__actions_type__["a" /* GET_ITEMS */]:
       return _extends({}, state, {
         items: action.payload,
-        markCompleteIndex: -1
+        markCompleteIndex: -1,
+        removeItemIndex: -1
       });
     case __WEBPACK_IMPORTED_MODULE_0__actions_type__["b" /* ADD_ITEM */]:
       return _extends({}, state, {
         item: action.payload,
-        markCompleteIndex: -1
+        markCompleteIndex: -1,
+        removeItemIndex: -1
       });
     case __WEBPACK_IMPORTED_MODULE_0__actions_type__["c" /* MARK_ITEM_COMPLETE */]:
       return _extends({}, state, {
-        markCompleteIndex: action.payload
+        markCompleteIndex: action.payload,
+        removeItemIndex: -1
+      });
+    case __WEBPACK_IMPORTED_MODULE_0__actions_type__["d" /* REMOVE_ITEM */]:
+      return _extends({}, state, {
+        removeItemIndex: action.payload,
+        markCompleteIndex: -1
       });
     default:
       return state;
